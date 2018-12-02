@@ -1,0 +1,113 @@
+// Block definition (there may be more than one block per file)
+FUNCTION_BLOCK udpflood
+
+// Define input variables
+VAR_INPUT
+    packetCount : REAL;
+    pastpacketCount : REAL;
+    packetCount1 : REAL;
+    packetCount2 : REAL;
+    packetCount3 : REAL;
+    packetCount4 : REAL;
+    packetCount5 : REAL;
+    pastpacketCount1 : REAL;
+    pastpacketCount2 : REAL;
+    pastpacketCount3 : REAL;
+    pastpacketCount4 : REAL;
+    pastpacketCount5 : REAL;
+END_VAR
+
+// Define output variable
+VAR_OUTPUT
+    traffic : REAL;
+END_VAR
+
+// Fuzzify input variable 'packetCount'
+FUZZIFY packetCount
+    TERM low := (0,1) (packetCount1,0);
+    TERM medium := (0,0) (packetCount2,1) (packetCount3,0);
+    TERM high := (packetCount2,0) (packetCount3,1) (packetCount5,0);
+    TERM veryhigh := (packetCount4,0) (packetCount5,1);
+END_FUZZIFY
+
+// Fuzzify input variable 'pastpacketCount'
+FUZZIFY pastpacketCount
+    TERM low := (0,1) (pastpacketCount1,0);
+    TERM medium := (0,0) (pastpacketCount2,1) (pastpacketCount3,0);
+    TERM high := (pastpacketCount2,0) (pastpacketCount3,1) (pastpacketCount5,0);
+    TERM veryhigh := (pastpacketCount4,0) (pastpacketCount5,1);
+END_FUZZIFY
+
+// Defuzzify output variable 'traffic'
+DEFUZZIFY traffic
+    TERM low := 1;
+    TERM normal := 15;
+    TERM abnormal := 50;
+    TERM attack := 75;
+    TERM severeattack := 100;
+    // Use 'Center Of Gravity' defuzzification method
+    METHOD : COGS;
+    // Default value is 0 (if no rule activates defuzzifier)
+    DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK No1
+    // Use 'min' for 'and' (also implicit use 'max'
+    // for 'or' to fulfill DeMorgan's Law)
+    AND : MIN;
+    // Use 'min' activation method
+    ACT : MIN;
+    // Use 'max' accumulation method
+    ACCU : MAX;
+
+    RULE 1 : IF packetCount IS veryhigh AND pastpacketCount IS veryhigh
+                THEN traffic IS severeattack;
+
+    RULE 2 : IF packetCount IS veryhigh AND pastpacketCount IS high
+                THEN traffic IS severeattack;
+
+    RULE 3 : IF packetCount IS veryhigh AND pastpacketCount IS medium
+                THEN traffic IS attack;
+
+    RULE 4 : IF packetCount IS veryhigh AND pastpacketCount IS low
+                THEN traffic IS attack;
+
+    RULE 5 : IF packetCount IS high AND pastpacketCount IS veryhigh
+                THEN traffic IS severeattack;
+
+    RULE 6 : IF packetCount IS high AND pastpacketCount IS high
+                THEN traffic IS attack;
+
+    RULE 7 : IF packetCount IS high AND pastpacketCount IS medium
+                THEN traffic IS abnormal;
+
+    RULE 8 : IF packetCount IS high AND pastpacketCount IS low
+                THEN traffic IS abnormal;
+//
+    RULE 9 : IF packetCount IS medium AND pastpacketCount IS veryhigh
+                THEN traffic IS abnormal;
+
+    RULE 10 : IF packetCount IS medium AND pastpacketCount IS high
+                THEN traffic IS abnormal;
+
+    RULE 11 : IF packetCount IS medium AND pastpacketCount IS medium
+                THEN traffic IS normal;
+
+    RULE 12 : IF packetCount IS medium AND pastpacketCount IS low
+                THEN traffic IS normal;
+//
+    RULE 13: IF packetCount IS low AND pastpacketCount IS veryhigh
+                THEN traffic IS abnormal;
+
+    RULE 14 : IF packetCount IS low AND pastpacketCount IS high
+                THEN traffic IS abnormal;
+
+    RULE 15 : IF packetCount IS low AND pastpacketCount IS medium
+                THEN traffic IS normal;
+
+    RULE 16 : IF packetCount IS low AND pastpacketCount IS low
+                THEN traffic IS low;
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK

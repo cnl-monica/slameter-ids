@@ -1,0 +1,62 @@
+// Block definition (there may be more than one block per file)
+FUNCTION_BLOCK portscan
+
+// Define input variables
+VAR_INPUT
+    flowCount : REAL;
+    flowCount1 : REAL;
+    flowCount2 : REAL;
+    flowCount3 : REAL;
+    flowCount4 : REAL;
+    flowCount5 : REAL;
+END_VAR
+
+// Define output variable
+VAR_OUTPUT
+    traffic : REAL;
+END_VAR
+
+// Fuzzify input variable 'flowCount'
+FUZZIFY flowCount
+    TERM low := (0,1) (flowCount1,0);
+    TERM medium := (0,0) (flowCount2,1) (flowCount3,0);
+    TERM high := (flowCount2,0) (flowCount3,1) (flowCount5,0);
+    TERM veryhigh := (flowCount4,0) (flowCount5,1);
+END_FUZZIFY
+
+// Defuzzify output variable 'traffic'
+DEFUZZIFY traffic
+    TERM normal := 15;
+    TERM abnormal := 50;
+    TERM attack := 75;
+    TERM severeattack := 100;
+    // Use 'Center Of Gravity' defuzzification method
+    METHOD : COGS;
+    // Default value is 0 (if no rule activates defuzzifier)
+    DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK No1
+    // Use 'min' for 'and' (also implicit use 'max'
+    // for 'or' to fulfill DeMorgan's Law)
+    AND : MIN;
+    // Use 'min' activation method
+    ACT : MIN;
+    // Use 'max' accumulation method
+    ACCU : MAX;
+
+    RULE 1 : IF flowCount IS low
+                THEN traffic IS normal;
+
+    RULE 2 : IF flowCount IS medium
+                THEN traffic IS abnormal;
+
+    RULE 3 : IF flowCount IS high
+                THEN traffic is attack;
+
+    RULE 4 : IF flowCount IS veryhigh
+                THEN traffic is severeattack;
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK

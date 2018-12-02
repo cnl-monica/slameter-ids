@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/monica/!svn/ver/1007/BasicMeter/Analyzer/bmIDS-v2.2/bmIDSapi/build/classes/sk/tuke/cnl/bmIDS/api
+END
+AttackInfo.class
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/monica/!svn/ver/1007/BasicMeter/Analyzer/bmIDS-v2.2/bmIDSapi/build/classes/sk/tuke/cnl/bmIDS/api/AttackInfo.class
+END
+Message.class
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/monica/!svn/ver/1007/BasicMeter/Analyzer/bmIDS-v2.2/bmIDSapi/build/classes/sk/tuke/cnl/bmIDS/api/Message.class
+END
+PortScanInfo.class
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/monica/!svn/ver/1007/BasicMeter/Analyzer/bmIDS-v2.2/bmIDSapi/build/classes/sk/tuke/cnl/bmIDS/api/PortScanInfo.class
+END
+ICMPFloodInfo.class
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/monica/!svn/ver/1007/BasicMeter/Analyzer/bmIDS-v2.2/bmIDSapi/build/classes/sk/tuke/cnl/bmIDS/api/ICMPFloodInfo.class
+END
+UdpFloodInfo.class
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/monica/!svn/ver/1007/BasicMeter/Analyzer/bmIDS-v2.2/bmIDSapi/build/classes/sk/tuke/cnl/bmIDS/api/UdpFloodInfo.class
+END
+AttackType.class
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/monica/!svn/ver/1007/BasicMeter/Analyzer/bmIDS-v2.2/bmIDSapi/build/classes/sk/tuke/cnl/bmIDS/api/AttackType.class
+END
+Flag.class
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/monica/!svn/ver/1007/BasicMeter/Analyzer/bmIDS-v2.2/bmIDSapi/build/classes/sk/tuke/cnl/bmIDS/api/Flag.class
+END
+SynFloodInfo.class
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/monica/!svn/ver/1007/BasicMeter/Analyzer/bmIDS-v2.2/bmIDSapi/build/classes/sk/tuke/cnl/bmIDS/api/SynFloodInfo.class
+END
+TrafficInfo.class
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/monica/!svn/ver/1007/BasicMeter/Analyzer/bmIDS-v2.2/bmIDSapi/build/classes/sk/tuke/cnl/bmIDS/api/TrafficInfo.class
+END
+MailBombInfo.class
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/monica/!svn/ver/1007/BasicMeter/Analyzer/bmIDS-v2.2/bmIDSapi/build/classes/sk/tuke/cnl/bmIDS/api/MailBombInfo.class
+END
+Authentication.class
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/monica/!svn/ver/1007/BasicMeter/Analyzer/bmIDS-v2.2/bmIDSapi/build/classes/sk/tuke/cnl/bmIDS/api/Authentication.class
+END

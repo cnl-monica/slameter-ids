@@ -1,0 +1,113 @@
+// Block definition (there may be more than one block per file)
+FUNCTION_BLOCK synflood
+
+// Define input variables
+VAR_INPUT
+    ackCount : REAL;
+    pastAckCount : REAL;
+    ackCount1 : REAL;
+    ackCount2 : REAL;
+    ackCount3 : REAL;
+    ackCount4 : REAL;
+    ackCount5 : REAL;
+    pastAckCount1 : REAL;
+    pastAckCount2 : REAL;
+    pastAckCount3 : REAL;
+    pastAckCount4 : REAL;
+    pastAckCount5 : REAL;
+END_VAR
+
+// Define output variable
+VAR_OUTPUT
+    traffic : REAL;
+END_VAR
+
+// Fuzzify input variable 'ackCount'
+FUZZIFY ackCount
+    TERM low := (0,1) (ackCount1,0);
+    TERM medium := (0,0) (ackCount2,1) (ackCount3,0);
+    TERM high := (ackCount2,0) (ackCount3,1) (ackCount5,0);
+    TERM veryhigh := (ackCount4,0) (ackCount5,1);
+END_FUZZIFY
+
+// Fuzzify input variable 'pastAckCount'
+FUZZIFY pastAckCount
+    TERM low := (0,1) (pastAckCount1,0);
+    TERM medium := (0,0) (pastAckCount2,1) (pastAckCount3,0);
+    TERM high := (pastAckCount2,0) (pastAckCount3,1) (pastAckCount5,0);
+    TERM veryhigh := (pastAckCount4,0) (pastAckCount5,1);
+END_FUZZIFY
+
+// Defuzzify output variable 'traffic'
+DEFUZZIFY traffic
+    TERM low := 1;
+    TERM normal := 25;
+    TERM abnormal := 50;
+    TERM attack := 75;
+    TERM severeattack := 100;
+    // Use 'Center Of Gravity' defuzzification method
+    METHOD : COGS;
+    // Default value is 0 (if no rule activates defuzzifier)
+    DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK No1
+    // Use 'min' for 'and' (also implicit use 'max'
+    // for 'or' to fulfill DeMorgan's Law)
+    AND : MIN;
+    // Use 'min' activation method
+    ACT : MIN;
+    // Use 'max' accumulation method
+    ACCU : MAX;
+
+    RULE 1 : IF ackCount IS veryhigh AND pastAckCount IS veryhigh
+                THEN traffic IS severeattack;
+
+    RULE 2 : IF ackCount IS veryhigh AND pastAckCount IS high
+                THEN traffic IS severeattack;
+
+    RULE 3 : IF ackCount IS veryhigh AND pastAckCount IS medium
+                THEN traffic IS attack;
+
+    RULE 4 : IF ackCount IS veryhigh AND pastAckCount IS low
+                THEN traffic IS attack;
+
+    RULE 5 : IF ackCount IS high AND pastAckCount IS veryhigh
+                THEN traffic IS severeattack;
+
+    RULE 6 : IF ackCount IS high AND pastAckCount IS high
+                THEN traffic IS attack;
+
+    RULE 7 : IF ackCount IS high AND pastAckCount IS medium
+                THEN traffic IS abnormal;
+
+    RULE 8 : IF ackCount IS high AND pastAckCount IS low
+                THEN traffic IS abnormal;
+ //
+    RULE 9 : IF ackCount IS medium AND pastAckCount IS veryhigh
+                THEN traffic IS abnormal;
+
+    RULE 10 : IF ackCount IS medium AND pastAckCount IS high
+                THEN traffic IS abnormal;
+
+    RULE 11 : IF ackCount IS medium AND pastAckCount IS medium
+                THEN traffic IS normal;
+
+    RULE 12 : IF ackCount IS medium AND pastAckCount IS low
+                THEN traffic IS normal;
+//
+    RULE 13: IF ackCount IS low AND pastAckCount IS veryhigh
+                THEN traffic IS abnormal;
+
+    RULE 14 : IF ackCount IS low AND pastAckCount IS high
+                THEN traffic IS abnormal;
+
+    RULE 15 : IF ackCount IS low AND pastAckCount IS medium
+                THEN traffic IS normal;
+
+    RULE 16 : IF ackCount IS low AND pastAckCount IS low
+                THEN traffic IS low;
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK

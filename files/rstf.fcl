@@ -1,0 +1,113 @@
+// Block definition (there may be more than one block per file)
+FUNCTION_BLOCK rstflood
+
+// Define input variables
+VAR_INPUT
+    rstCount : REAL;
+    pastRstCount : REAL;
+    rstCount1 : REAL;
+    rstCount2 : REAL;
+    rstCount3 : REAL;
+    rstCount4 : REAL;
+    rstCount5 : REAL;
+    pastRstCount1 : REAL;
+    pastRstCount2 : REAL;
+    pastRstCount3 : REAL;
+    pastRstCount4 : REAL;
+    pastRstCount5 : REAL;
+END_VAR
+
+// Define output variable
+VAR_OUTPUT
+    traffic : REAL;
+END_VAR
+
+// Fuzzify input variable 'rstCount'
+FUZZIFY rstCount
+    TERM low := (0,1) (rstCount1,0);
+    TERM medium := (0,0) (rstCount2,1) (rstCount3,0);
+    TERM high := (rstCount2,0) (rstCount3,1) (rstCount5,0);
+    TERM veryhigh := (rstCount4,0) (rstCount5,1);
+END_FUZZIFY
+
+// Fuzzify input variable 'pastRstCount'
+FUZZIFY pastRstCount
+    TERM low := (0,1) (pastRstCount1,0);
+    TERM medium := (0,0) (pastRstCount2,1) (pastRstCount3,0);
+    TERM high := (pastRstCount2,0) (pastRstCount3,1) (pastRstCount5,0);
+    TERM veryhigh := (pastRstCount4,0) (pastRstCount5,1);
+END_FUZZIFY
+
+// Defuzzify output variable 'traffic'
+DEFUZZIFY traffic
+    TERM low := 1;
+    TERM normal := 25;
+    TERM abnormal := 50;
+    TERM attack := 75;
+    TERM severeattack := 100;
+    // Use 'Center Of Gravity' defuzzification method
+    METHOD : COGS;
+    // Default value is 0 (if no rule activates defuzzifier)
+    DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK No1
+    // Use 'min' for 'and' (also implicit use 'max'
+    // for 'or' to fulfill DeMorgan's Law)
+    AND : MIN;
+    // Use 'min' activation method
+    ACT : MIN;
+    // Use 'max' accumulation method
+    ACCU : MAX;
+
+    RULE 1 : IF rstCount IS low AND pastRstCount IS low 
+                THEN traffic IS low;
+
+    RULE 2 : IF rstCount IS low AND pastRstCount IS medium
+                THEN traffic IS normal;
+
+    RULE 3 : IF rstCount IS low AND pastRstCount IS high
+                THEN traffic IS abnormal;
+
+    RULE 4 : IF rstCount IS low AND pastRstCount IS veryhigh
+                THEN traffic IS abnormal;
+
+    RULE 5 : IF rstCount IS medium AND pastRstCount IS low
+                THEN traffic IS normal;
+
+    RULE 6 : IF rstCount IS medium AND pastRstCount IS medium
+                THEN traffic IS normal;
+
+    RULE 7 : IF rstCount IS medium AND pastRstCount IS high
+                THEN traffic IS normal;
+
+    RULE 8 : IF rstCount IS medium AND pastRstCount IS veryhigh
+                THEN traffic IS normal;
+ //
+    RULE 9 : IF rstCount IS high AND pastRstCount IS low
+                THEN traffic IS abnormal;
+
+    RULE 10 : IF rstCount IS high AND pastRstCount IS medium
+                THEN traffic IS abnormal;
+
+    RULE 11 : IF rstCount IS high AND pastRstCount IS high
+                THEN traffic IS attack;
+
+    RULE 12 : IF rstCount IS high AND pastRstCount IS veryhigh
+                THEN traffic IS abnormal;
+//
+    RULE 13: IF rstCount IS veryhigh AND pastRstCount IS low
+                THEN traffic IS abnormal;
+
+    RULE 14 : IF rstCount IS veryhigh AND pastRstCount IS medium
+                THEN traffic IS attack;
+
+    RULE 15 : IF rstCount IS veryhigh AND pastRstCount IS high
+                THEN traffic IS severeattack;
+
+    RULE 16 : IF rstCount IS veryhigh AND pastRstCount IS veryhigh
+                THEN traffic IS severeattack;
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
